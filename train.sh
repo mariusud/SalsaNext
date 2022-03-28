@@ -10,7 +10,7 @@ helpFunction()
    exit 1
 }
 
-while getopts "d:a:l:n:c:p:u:" opt
+while getopts "d:a:l:n:c:p:u:dc:" opt
 do
    case "$opt" in
       d ) d="$OPTARG" ;;
@@ -20,6 +20,7 @@ do
       c ) c="$OPTARG" ;;
       p ) p="$OPTARG" ;;
       u ) u="$OPTARG" ;;
+      dc ) dc="$OPTARG" ;;
       ? ) helpFunction ;;
    esac
 done
@@ -42,4 +43,4 @@ else
   p=$(get_abs_filename "$p")
 fi
 export CUDA_VISIBLE_DEVICES="$c"
-cd ./train/tasks/semantic;  ./train.py -d "$d"  -ac "$a" -l "$l" -n "$n" -p "$p" -u "$u"
+cd ./train/tasks/semantic;  ./train.py -d "$d"  -ac "$a" -l "$l" -n "$n" -p "$p" -u "$u" -dc "$dc"
