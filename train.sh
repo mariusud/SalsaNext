@@ -36,6 +36,8 @@ fi
 d=$(get_abs_filename "$d")
 a=$(get_abs_filename "$a")
 l=$(get_abs_filename "$l")
+dc=$(get_abs_filename "$dc")
+
 if [ -z "$p" ]
 then
  p=""
