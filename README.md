@@ -73,3 +73,16 @@ We based our code on [RangeNet++](https://github.com/PRBonn/lidar-bonnetal), ple
 }
 ```
 
+
+
+### script
+
+./train.sh -d /home/ws/src/labelling_node/src/dataset -a /salsanext.yml -m salsanext -l /logs -c 3,4
+
+
+./train.sh -d /home/marius/ws/src/labelling_node/src/training_dataset -a salsanext_industrial.yml -l /logs
+
+OMP: Info #250: KMP_AFFINITY: pid 4191576 tid 4191576 thread 0 bound to OS proc set 0-11
+
+
+(salsanext09) marius@marius-OptiPlex-7060:~/Development/SalsaNext$ ./train.sh -d /home/marius/ws/src/labelling_node/src/training_dataset -a salsanext_industrial.yml -l logs
