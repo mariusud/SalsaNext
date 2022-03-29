@@ -47,8 +47,8 @@ dataset:
   sensor:
     name: "HDL64"
     type: "spherical" # projective
-    fov_up: 45
-    fov_down: -45
+    fov_up: 3
+    fov_down: -25
     img_prop:
       width: 2048
       height: 128 #64 # 128?
