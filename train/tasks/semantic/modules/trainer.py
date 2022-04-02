@@ -41,7 +41,7 @@ class SoftmaxHeteroscedasticLoss(torch.nn.Module):
 
     def forward(self, outputs, targets, eps=1e-5):
         mean, var = self.adf_softmax(*outputs)
-        targets = torch.nn.functional.one_hot(targets, num_classes=20).permute(0,3,1,2).float()
+        targets = torch.nn.functional.one_hot(targets, num_classes=4).permute(0,3,1,2).float()
 
         precision = 1 / (var + eps)
         return torch.mean(0.5 * precision * (targets - mean) ** 2 + 0.5 * torch.log(var + eps))
@@ -133,7 +133,7 @@ class Trainer():
         self.multi_gpu = False
         self.n_gpus = 0
         self.model_single = self.model
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("Training in device: ", self.device)
         if torch.cuda.is_available() and torch.cuda.device_count() > 0:
             cudnn.benchmark = True
@@ -141,6 +141,8 @@ class Trainer():
             self.gpu = True
             self.n_gpus = 1
             self.model.cuda()
+            print("T")
+
         if torch.cuda.is_available() and torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
             self.model = nn.DataParallel(self.model)  # spread in gpus
@@ -370,14 +372,14 @@ class Trainer():
             if self.uncertainty:
                 output = model(in_vol)
                 output_mean, output_var = adf.Softmax(dim=1, keep_variance_fn=keep_variance_fn)(*output)
-                hetero = self.SoftmaxHeteroscedasticLoss(output,proj_labels)
-                loss_m = criterion(output_mean.clamp(min=1e-8), proj_labels) + hetero + self.ls(output_mean, proj_labels.long())
+                hetero = self.SoftmaxHeteroscedasticLoss(output,proj_labels.long())
+                loss_m = criterion(output_mean.clamp(min=1e-8), proj_labels.long()) + hetero + self.ls(output_mean, proj_labels.long())
 
                 hetero_l.update(hetero.mean().item(), in_vol.size(0))
                 output = output_mean
             else:
                 output = model(in_vol)
-                loss_m = criterion(torch.log(output.clamp(min=1e-8)), proj_labels) + self.ls(output, proj_labels.long())
+                loss_m = criterion(torch.log(output.clamp(min=1e-8)), proj_labels.long()) + self.ls(output, proj_labels.long())
 
             optimizer.zero_grad()
             if self.n_gpus > 1:
@@ -392,7 +394,7 @@ class Trainer():
             with torch.no_grad():
                 evaluator.reset()
                 argmax = output.argmax(dim=1)
-                evaluator.addBatch(argmax, proj_labels)
+                evaluator.addBatch(argmax, proj_labels.long())
                 accuracy = evaluator.getacc()
                 jaccard, class_jaccard = evaluator.getIoU()
 

@@ -1,37 +1,43 @@
 # This file is covered by the LICENSE file in the root of this project.
 name: "industrial"
 labels:
-  0: "unlabeled"
+  0: "background"
+  10: "unlabeled"
   50: "stairs"
   100: "chimney"
 
 
 color_map: # bgr
-  0: [0, 0, 0]
+  0: [0,0,0]
+  10: [0, 255, 0]
   50: [0, 0, 255]
-  100: [255, 255, 50]
+  100: [255, 0, 0]
   # 252: [245, 150, 100]
 
 content: # as a ratio with the total number of points
-  0: 0.40
-  50: 0.38
-  100: 0.23
+  10: 0.33
+  50: 0.33
+  100: 0.33
 
 
 # classes that are indistinguishable from single scan or inconsistent in
 # ground truth are mapped to their closest equivalent
 learning_map:
-  0: 0     # "unlabeled"
-  50: 0
-  100: 0
+  0: 0
+  10: 1     # "unlabeled"
+  50: 2
+  100: 3
 
 learning_map_inv: # inverse of previous map
   0: 0      # "unlabeled", and others ignored
-  
+  1: 10
+  2: 50
+  3: 100
 learning_ignore: # Ignore classes
-  0: False      # "unlabeled", and others ignored    MAYBE CHANGE?
-  50: False     # "car"
-  100: False     # "bicycle"
+  0: True
+  1: False
+  2: False
+  3: False
 
 split: # sequence numbers
   train:
@@ -93,7 +99,6 @@ split: # sequence numbers
     - 72
     - 73
     - 74
-    - 75
     - 76
     - 77
     - 79
@@ -174,6 +179,7 @@ split: # sequence numbers
   valid:
     - 8
     - 55
+    - 75
     - 127
     - 138
     - 155
