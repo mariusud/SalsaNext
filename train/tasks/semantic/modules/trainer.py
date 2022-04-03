@@ -133,7 +133,7 @@ class Trainer():
         self.multi_gpu = False
         self.n_gpus = 0
         self.model_single = self.model
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print("Training in device: ", self.device)
         if torch.cuda.is_available() and torch.cuda.device_count() > 0:
             cudnn.benchmark = True
@@ -141,11 +141,10 @@ class Trainer():
             self.gpu = True
             self.n_gpus = 1
             self.model.cuda()
-            print("T")
 
         if torch.cuda.is_available() and torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
-            self.model = nn.DataParallel(self.model)  # spread in gpus
+            self.model = nn.DataParallel(self.model,device_ids=[0,1])  # spread in gpus
             self.model = convert_model(self.model).cuda()  # sync batchnorm
             self.model_single = self.model.module  # single model to get weight names
             self.multi_gpu = True
@@ -157,7 +156,7 @@ class Trainer():
         self.SoftmaxHeteroscedasticLoss = SoftmaxHeteroscedasticLoss().to(self.device)
         # loss as dataparallel too (more images in batch)
         if self.n_gpus > 1:
-            self.criterion = nn.DataParallel(self.criterion).cuda()  # spread in gpus
+            self.criterion = nn.DataParallel(self.criterion,device_ids=[0,1]).cuda()  # spread in gpus
             self.ls = nn.DataParallel(self.ls).cuda()
             self.SoftmaxHeteroscedasticLoss = nn.DataParallel(self.SoftmaxHeteroscedasticLoss).cuda()
         self.optimizer = optim.SGD([{'params': self.model.parameters()}],
@@ -366,7 +365,7 @@ class Trainer():
                 in_vol = in_vol.cuda()
                 #proj_mask = proj_mask.cuda()
             if self.gpu:
-                proj_labels = proj_labels.cuda().long()
+                proj_labels = proj_labels.cuda()#.long()
 
             # compute output
             if self.uncertainty:
