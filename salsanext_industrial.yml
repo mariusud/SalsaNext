@@ -41,8 +41,8 @@ post:
 ################################################################################
 # dataset (to find parser)
 dataset:
-  labels: "industrial"
-  scans: "industrial"
+  labels: "kitti"
+  scans: "kitti"
   max_points: 150000 # max of any scan in dataset
   sensor:
     name: "Ouster OS-1"
