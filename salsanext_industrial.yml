@@ -29,7 +29,7 @@ post:
     train: True
     params: False # this should be a dict when in use
   KNN:
-    use: True # This parameter default is false
+    use: False # This parameter default is false
     params:
       knn: 5
       search: 5
@@ -50,7 +50,7 @@ dataset:
     fov_up: 45
     fov_down: -45
     img_prop:
-      width: 512
+      width: 1024
       height: 128 #64 # 128?
     img_means: #range,x,y,z,signal
       - 12.12
